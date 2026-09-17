@@ -85,3 +85,82 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+
+-- ============================================
+-- INSERT Trigger
+-- ============================================
+
+DELIMITER $$
+
+CREATE TRIGGER tr_TransferInventoryToReportDB
+AFTER INSERT ON Inventory
+FOR EACH ROW
+BEGIN
+
+    INSERT INTO ReportDB.Inventory
+    (
+        atr_key,
+        MaterialId,
+        MaterialCode,
+        WorkOrder,
+        MaterialQty,
+        BookingQty
+    )
+    VALUES
+    (
+        NEW.atr_key,
+        NEW.MaterialId,
+        NEW.MaterialCode,
+        NEW.WorkOrder,
+        NEW.MaterialQty,
+        NEW.BookingQty
+    );
+
+END$$
+
+DELIMITER ;
+
+
+-- ============================================
+-- UPDATE Trigger
+-- ============================================
+
+DELIMITER $$
+
+CREATE TRIGGER tr_UpdateInventoryToReportDB
+AFTER UPDATE ON Inventory
+FOR EACH ROW
+BEGIN
+
+    UPDATE ReportDB.Inventory
+    SET
+        MaterialId = NEW.MaterialId,
+        MaterialCode = NEW.MaterialCode,
+        WorkOrder = NEW.WorkOrder,
+        MaterialQty = NEW.MaterialQty,
+        BookingQty = NEW.BookingQty
+    WHERE atr_key = NEW.atr_key;
+
+END$$
+
+DELIMITER ;
+
+-- ============================================
+-- DELETE Trigger
+-- ============================================
+
+DELIMITER $$
+
+CREATE TRIGGER tr_DeleteInventoryToReportDB
+AFTER DELETE ON Inventory
+FOR EACH ROW
+BEGIN
+
+    DELETE FROM ReportDB.Inventory
+    WHERE atr_key = OLD.atr_key;
+
+END$$
+
+DELIMITER ;
