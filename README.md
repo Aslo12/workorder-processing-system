@@ -377,6 +377,88 @@ ProductionDB.WorkOrder
         +---- DELETE ----> ReportDB.WorkOrder
 ```
 
+## Production Inventory Processing
+
+The project also includes a Production Inventory processing implementation using MySQL and CSV data.
+
+### Production Inventory Table
+
+Production inventory data is stored in:
+
+```sql
+AT_ProductionInventoryTable
+```
+
+The table contains inventory-related information such as:
+
+* `MaterialId`
+* `MaterialCode`
+* `SizeCode`
+* `BomName`
+* `creation_time`
+* `DateOfManufacture`
+* `DateOfExpiry`
+* `MaterialStatus`
+* `MachineNo`
+* `ProductionArea`
+
+### CSV Import
+
+Production inventory data is provided through a CSV file:
+
+```text
+pds_inventory.csv
+```
+
+The CSV file is imported into the `AT_ProductionInventoryTable` using MySQL `LOAD DATA INFILE`.
+
+Example:
+
+```sql
+LOAD DATA INFILE
+'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/pds_inventory.csv'
+INTO TABLE AT_ProductionInventoryTable
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\r\n'
+IGNORE 1 ROWS;
+```
+
+The first row of the CSV file is ignored because it contains column headers.
+
+### Inventory Processing Flow
+
+```text
+pds_inventory.csv
+        |
+        | LOAD DATA INFILE
+        v
+AT_ProductionInventoryTable
+        |
+        | Stored Procedure
+        v
+Production Inventory Processing
+```
+
+### Inventory Transfer
+
+After importing the inventory records, the project uses a MySQL stored procedure to process and transfer the inventory data to the target inventory table.
+
+The procedure handles the database-side processing without requiring manual row-by-row insertion.
+
+### Inventory Implementation
+
+This implementation demonstrates:
+
+* CSV-based database data import
+* MySQL `LOAD DATA INFILE`
+* Production inventory table design
+* Stored procedure based processing
+* SQL-based data transfer
+* Handling of production inventory data
+* Database-side automation and processing
+
+
 ## Complete Work Order Lifecycle
 
 The complete processing flow is:
